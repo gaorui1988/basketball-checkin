@@ -20,10 +20,12 @@ exports.main = async (event, context) => {
   // 我的报名
   const mySignup = signupsRes.data.find(s => s.openid === wxContext.OPENID) || null
 
-  // 我的统计
+  // 我的统计（安全获取）
   let myStats = null
-  const userRes = await db.collection('users').doc(wxContext.OPENID).get()
-  if (userRes.data) myStats = userRes.data
+  try {
+    const userRes = await db.collection('users').doc(wxContext.OPENID).get()
+    myStats = userRes.data || null
+  } catch (e) {}
 
   return {
     code: 0,

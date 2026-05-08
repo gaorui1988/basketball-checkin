@@ -24,48 +24,57 @@ exports.main = async (event, context) => {
     data: { status: 'checked_in', checkinTime: db.serverDate() }
   })
 
-  // 更新用户积分（+10）和统计
-  const userRes = await db.collection('users').doc(wxContext.OPENID).get()
-  if (!userRes.data) {
-    // 首次签到，初始化用户
+  // 更新用户积分
+  let bonusPoints = 10
+  try {
+    const userRes = await db.collection('users').doc(wxContext.OPENID).get()
+    if (userRes.data) {
+      const lastDate = userRes.data.lastCheckinDate
+      let consecutive = 1
+      if (lastDate) {
+        const diffDays = Math.floor((new Date() - new Date(lastDate)) / (1000 * 60 * 60 * 24))
+        if (diffDays <= 14) consecutive = (userRes.data.consecutiveCheckins || 0) + 1
+      }
+      if (consecutive >= 5 && consecutive % 5 === 0) bonusPoints += 15
+
+      await db.collection('users').doc(wxContext.OPENID).update({
+        data: {
+          points: _.inc(bonusPoints),
+          totalSignups: _.inc(1),
+          totalCheckins: _.inc(1),
+          lastCheckinDate: new Date(),
+          consecutiveCheckins: consecutive,
+        }
+      })
+    } else {
+      // 用户未注册，创建记录
+      await db.collection('users').add({
+        data: {
+          _id: wxContext.OPENID,
+          openid: wxContext.OPENID,
+          points: bonusPoints,
+          totalSignups: 1,
+          totalCheckins: 1,
+          totalNoShows: 0,
+          totalCancels: 0,
+          lastCheckinDate: new Date(),
+          consecutiveCheckins: 1,
+        }
+      })
+    }
+  } catch (e) {
+    // 用户不存在，新建
     await db.collection('users').add({
       data: {
         _id: wxContext.OPENID,
         openid: wxContext.OPENID,
-        points: 10,
+        points: bonusPoints,
         totalSignups: 1,
         totalCheckins: 1,
         totalNoShows: 0,
         totalCancels: 0,
         lastCheckinDate: new Date(),
         consecutiveCheckins: 1,
-      }
-    })
-  } else {
-    // 检查连续到场
-    const lastDate = userRes.data.lastCheckinDate
-    const today = new Date()
-    let consecutive = 1
-    if (lastDate) {
-      const diffDays = Math.floor((today - new Date(lastDate)) / (1000 * 60 * 60 * 24))
-      if (diffDays <= 14) {
-        consecutive = (userRes.data.consecutiveCheckins || 0) + 1
-      }
-    }
-
-    let bonusPoints = 10
-    // 连续5次到场额外奖励
-    if (consecutive >= 5 && consecutive % 5 === 0) {
-      bonusPoints += 15
-    }
-
-    await db.collection('users').doc(wxContext.OPENID).update({
-      data: {
-        points: _.inc(bonusPoints),
-        totalSignups: _.inc(1),
-        totalCheckins: _.inc(1),
-        lastCheckinDate: today,
-        consecutiveCheckins: consecutive,
       }
     })
   }

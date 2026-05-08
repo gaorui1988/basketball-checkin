@@ -2,6 +2,7 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
+const _ = db.command
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -22,7 +23,6 @@ exports.main = async (event, context) => {
   if (existRes.data.length > 0) {
     const existing = existRes.data[0]
     if (existing.status === 'cancelled') {
-      // 重新报名(恢复)
       await db.collection('signups').doc(existing._id).update({
         data: { status: 'signed', signTime: db.serverDate(), cancelTime: null }
       })
@@ -30,15 +30,20 @@ exports.main = async (event, context) => {
       return { code: -1, errMsg: '你已经报名了' }
     }
   } else {
-    // 新报名
-    const userRes = await db.collection('users').doc(wxContext.OPENID).get()
-    const user = userRes.data || {}
+    // 新报名 - 安全获取用户信息
+    let nickName = '', avatarUrl = ''
+    try {
+      const userRes = await db.collection('users').doc(wxContext.OPENID).get()
+      nickName = userRes.data?.nickName || ''
+      avatarUrl = userRes.data?.avatarUrl || ''
+    } catch (e) {}
+
     await db.collection('signups').add({
       data: {
         activityId,
         openid: wxContext.OPENID,
-        nickName: user.nickName || '',
-        avatarUrl: user.avatarUrl || '',
+        nickName,
+        avatarUrl,
         status: 'signed',
         signTime: db.serverDate(),
       }
@@ -47,7 +52,7 @@ exports.main = async (event, context) => {
 
   // 更新计数
   await db.collection('activities').doc(activityId).update({
-    data: { signedCount: cloud.database().command.inc(1) }
+    data: { signedCount: _.inc(1) }
   })
 
   return { code: 0, data: { message: '报名成功' } }

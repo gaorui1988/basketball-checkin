@@ -27,13 +27,28 @@ exports.main = async (event, context) => {
     data: { signedCount: _.inc(-1) }
   })
 
-  // 扣5积分（取消惩罚）
-  await db.collection('users').doc(wxContext.OPENID).update({
-    data: {
-      totalCancels: _.inc(1),
-      points: _.inc(-5),
-    }
-  })
+  // 扣5积分
+  try {
+    await db.collection('users').doc(wxContext.OPENID).update({
+      data: {
+        totalCancels: _.inc(1),
+        points: _.inc(-5),
+      }
+    })
+  } catch (e) {
+    // 用户不存在，创建
+    await db.collection('users').add({
+      data: {
+        _id: wxContext.OPENID,
+        openid: wxContext.OPENID,
+        points: -5,
+        totalSignups: 0,
+        totalCheckins: 0,
+        totalNoShows: 0,
+        totalCancels: 1,
+      }
+    })
+  }
 
   return { code: 0, data: { message: '已取消，扣除5积分' } }
 }
