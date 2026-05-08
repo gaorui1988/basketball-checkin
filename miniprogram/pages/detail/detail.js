@@ -122,7 +122,7 @@ Page({
   onShareAppMessage() {
     const act = this.data.activity
     return {
-      title: `🏀 ${act?.title || '来打球！'}`,
+      title: `🏀 ${act?.title || '组一波！'}`,
       path: `/pages/detail/detail?id=${this.activityId}`,
     }
   },

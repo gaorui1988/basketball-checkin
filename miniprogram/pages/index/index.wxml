@@ -1,7 +1,8 @@
 <view class="page">
   <!-- 顶部Banner -->
   <view class="banner">
-    <text class="banner-title">🏀 约球打卡</text>
+    <image class="banner-logo" src="/images/app-logo.png"></image>
+    <text class="banner-title">组一波</text>
     <text class="banner-sub">与球友一起，拒绝放鸽子</text>
   </view>
 

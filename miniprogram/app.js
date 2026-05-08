@@ -15,7 +15,7 @@ App({
   // 全局分享配置
   onShareAppMessage() {
     return {
-      title: '🏀 来打球！一起组队',
+      title: '🏀 组一波！快来报名',
       path: '/pages/index/index',
     }
   },
