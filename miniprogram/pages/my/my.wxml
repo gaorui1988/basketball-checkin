@@ -10,8 +10,8 @@
       
       <!-- 未授权时显示登录按钮 -->
       <button wx:if="{{!isLoggedIn}}" class="login-btn" 
-              bindtap="onGetProfile" loading="{{profileLoading}}">
-        获取微信头像和昵称
+              bindtap="onShowLogin">
+        设置头像和昵称
       </button>
 
       <view class="badge-row" wx:if="{{badge}}">
@@ -52,4 +52,26 @@
       </view>
     </view>
   </block>
+  
+  <!-- 授权弹窗 -->
+  <view class="popup-mask" wx:if="{{showLoginPopup}}" bindtap="onClosePopup"></view>
+  <view class="popup-card" wx:if="{{showLoginPopup}}">
+    <text class="popup-title">设置资料</text>
+    <text class="popup-desc">设置昵称和头像后，球友才知道你是谁</text>
+    
+    <view class="avatar-section">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar-preview" src="{{tempAvatarUrl || '/images/default-avatar.png'}}"></image>
+      </button>
+      <text class="avatar-hint">点击换头像</text>
+    </view>
+
+    <input class="nickname-input" type="nickname" placeholder="输入昵称" 
+           bindinput="onNicknameInput" />
+
+    <view class="popup-actions">
+      <button class="popup-cancel" bindtap="onClosePopup">跳过</button>
+      <button class="popup-confirm" bindtap="onSaveProfile" loading="{{profileLoading}}">保存</button>
+    </view>
+  </view>
 </view>

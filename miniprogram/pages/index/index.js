@@ -1,6 +1,5 @@
 // pages/index/index.js
 const api = require('../../utils/api')
-const util = require('../../utils/util')
 
 Page({
   data: {
@@ -9,6 +8,9 @@ Page({
     tabActive: 'open',
     isLoggedIn: false,
     loginLoading: false,
+    showLoginPopup: false,
+    tempNickName: '',
+    tempAvatarUrl: '',
   },
 
   onLoad() {
@@ -36,7 +38,6 @@ Page({
       const activities = await api.getActivityList(this.data.tabActive)
       this.setData({ activities, loading: false })
     } catch (err) {
-      console.error('加载活动失败', err)
       this.setData({ loading: false })
     }
   },
@@ -48,22 +49,46 @@ Page({
     })
   },
 
-  async onLogin() {
+  // 弹出授权窗口
+  onShowLogin() {
+    this.setData({
+      showLoginPopup: true,
+      tempAvatarUrl: '',
+      tempNickName: '',
+    })
+  },
+
+  // 选择头像
+  onChooseAvatar(e) {
+    this.setData({ tempAvatarUrl: e.detail.avatarUrl })
+  },
+
+  // 输入昵称
+  onNicknameInput(e) {
+    this.setData({ tempNickName: e.detail.value })
+  },
+
+  // 保存授权
+  async onSaveProfile() {
+    const nickName = this.data.tempNickName
+    const avatarUrl = this.data.tempAvatarUrl
+    if (!nickName) {
+      wx.showToast({ title: '请填写昵称', icon: 'none' })
+      return
+    }
     this.setData({ loginLoading: true })
     try {
-      const res = await wx.getUserProfile({
-        desc: '用于排行榜展示球友信息',
-      })
-      if (res && res.userInfo) {
-        const { nickName, avatarUrl } = res.userInfo
-        await api.updateUserProfile({ nickName, avatarUrl })
-        this.setData({ isLoggedIn: true })
-        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
-      }
-    } catch (e) {
-      // 用户拒绝
+      await api.updateUserProfile({ nickName, avatarUrl })
+      this.setData({ isLoggedIn: true, showLoginPopup: false })
+      wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '保存失败', icon: 'none' })
     }
     this.setData({ loginLoading: false })
+  },
+
+  onClosePopup() {
+    this.setData({ showLoginPopup: false })
   },
 
   onCreate() {
@@ -72,7 +97,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '🏀 来打球！看看最近有什么活动',
+      title: '🏀 组一波！快来报名',
       path: '/pages/index/index',
     }
   },

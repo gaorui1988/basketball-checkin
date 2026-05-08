@@ -10,6 +10,9 @@ Page({
     loading: true,
     isLoggedIn: false,
     profileLoading: false,
+    showLoginPopup: false,
+    tempNickName: '',
+    tempAvatarUrl: '',
   },
 
   onShow() {
@@ -43,27 +46,48 @@ Page({
     }
   },
 
-  async onGetProfile() {
+  // 弹出授权
+  onShowLogin() {
+    this.setData({
+      showLoginPopup: true,
+      tempAvatarUrl: '',
+      tempNickName: '',
+    })
+  },
+
+  onChooseAvatar(e) {
+    this.setData({ tempAvatarUrl: e.detail.avatarUrl })
+  },
+
+  onNicknameInput(e) {
+    this.setData({ tempNickName: e.detail.value })
+  },
+
+  async onSaveProfile() {
+    const nickName = this.data.tempNickName
+    const avatarUrl = this.data.tempAvatarUrl
+    if (!nickName) {
+      wx.showToast({ title: '请填写昵称', icon: 'none' })
+      return
+    }
     this.setData({ profileLoading: true })
     try {
-      const res = await wx.getUserProfile({
-        desc: '用于排行榜展示球友信息',
+      await api.updateUserProfile({ nickName, avatarUrl })
+      this.setData({
+        isLoggedIn: true,
+        showLoginPopup: false,
+        'stats.nickName': nickName,
+        'stats.avatarUrl': avatarUrl,
       })
-      if (res && res.userInfo) {
-        const { nickName, avatarUrl } = res.userInfo
-        await api.updateUserProfile({ nickName, avatarUrl })
-        this.setData({
-          'stats.nickName': nickName,
-          'stats.avatarUrl': avatarUrl,
-          isLoggedIn: true,
-        })
-        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
-      }
-    } catch (e) {
-      // 用户拒绝
-      wx.showToast({ title: '已取消授权', icon: 'none' })
+      wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '保存失败', icon: 'none' })
     }
     this.setData({ profileLoading: false })
+  },
+
+  onClosePopup() {
+    this.setData({ showLoginPopup: false })
   },
 
   onGoDetail(e) {
