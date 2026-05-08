@@ -78,9 +78,14 @@ Page({
     try {
       let avatarUrl = ''
       if (tempPath) {
+        // 先压缩图片（上传限制2MB）
+        const compressRes = await wx.compressImage({
+          src: tempPath,
+          quality: 80,
+        })
         const cloudRes = await wx.cloud.uploadFile({
           cloudPath: `avatars/${Date.now()}.png`,
-          filePath: tempPath,
+          filePath: compressRes.tempFilePath,
         })
         avatarUrl = cloudRes.fileID
       }
