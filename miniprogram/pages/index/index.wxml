@@ -41,6 +41,6 @@
 
   <!-- 创建按钮 -->
   <view class="create-btn-wrap">
-    <button class="btn-primary create-btn" bindtap="onCreate">＋ 发起约球</button>
+    <button class="btn-primary create-btn" bindtap="onCreate">＋ 组一波</button>
   </view>
 </view>

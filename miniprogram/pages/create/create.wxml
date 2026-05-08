@@ -39,7 +39,7 @@
 
   <view class="form-actions">
     <button class="btn-primary" bindtap="onSubmit" loading="{{submitLoading}}">
-      发起约球 🏀
+      组一波 🏀
     </button>
   </view>
 </view>
