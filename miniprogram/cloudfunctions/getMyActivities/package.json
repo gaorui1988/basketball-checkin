@@ -1,5 +1,9 @@
 {
-  "name": "getMyActivities",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "获取我参加的活动"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

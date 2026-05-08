@@ -1,5 +1,9 @@
 {
-  "name": "checkin",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "签到打卡"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

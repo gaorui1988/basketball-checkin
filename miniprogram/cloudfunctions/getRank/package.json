@@ -1,5 +1,9 @@
 {
-  "name": "getRank",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "获取排行榜"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

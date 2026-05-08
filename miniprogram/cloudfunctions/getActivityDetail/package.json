@@ -1,5 +1,9 @@
 {
-  "name": "getActivityDetail",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "获取活动详情+报名列表"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

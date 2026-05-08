@@ -1,5 +1,9 @@
 {
-  "name": "getActivityList",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "获取活动列表"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

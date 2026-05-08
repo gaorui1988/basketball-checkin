@@ -1,5 +1,9 @@
 {
-  "name": "signup",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "报名活动"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }

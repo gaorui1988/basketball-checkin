@@ -1,5 +1,9 @@
 {
-  "name": "settleActivity",
+  "name": "cloud-function",
   "version": "1.0.0",
-  "description": "结算活动（标记放鸽子）"
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
 }
