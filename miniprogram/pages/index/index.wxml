@@ -5,6 +5,12 @@
     <text class="banner-sub">与球友一起，拒绝放鸽子</text>
   </view>
 
+  <!-- 登录提示条 -->
+  <view class="login-banner" wx:if="{{!isLoggedIn}}">
+    <text class="login-banner-text">💬 授权后可在排行榜显示昵称和头像</text>
+    <button class="login-banner-btn" bindtap="onLogin" loading="{{loginLoading}}">去授权</button>
+  </view>
+
   <!-- Tab切换 -->
   <view class="tab-bar">
     <view class="tab-item {{tabActive === 'open' ? 'active' : ''}}" 

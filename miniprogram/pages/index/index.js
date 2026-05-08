@@ -6,19 +6,28 @@ Page({
   data: {
     activities: [],
     loading: true,
-    tabActive: 'open',  // open | my | past
-    myActivities: [],
+    tabActive: 'open',
+    isLoggedIn: false,
+    loginLoading: false,
   },
 
   onLoad() {
     this.loadActivities()
+    this.checkLogin()
   },
 
   onShow() {
-    // 返回时刷新
     if (!this.data.loading) {
       this.loadActivities()
+      this.checkLogin()
     }
+  },
+
+  async checkLogin() {
+    try {
+      const stats = await api.getUserStats()
+      this.setData({ isLoggedIn: !!(stats && stats.nickName) })
+    } catch (e) {}
   },
 
   async loadActivities() {
@@ -39,11 +48,28 @@ Page({
     })
   },
 
+  async onLogin() {
+    this.setData({ loginLoading: true })
+    try {
+      const res = await wx.getUserProfile({
+        desc: '用于排行榜展示球友信息',
+      })
+      if (res && res.userInfo) {
+        const { nickName, avatarUrl } = res.userInfo
+        await api.updateUserProfile({ nickName, avatarUrl })
+        this.setData({ isLoggedIn: true })
+        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+      }
+    } catch (e) {
+      // 用户拒绝
+    }
+    this.setData({ loginLoading: false })
+  },
+
   onCreate() {
     wx.navigateTo({ url: '/pages/create/create' })
   },
 
-  // 分享给微信群
   onShareAppMessage() {
     return {
       title: '🏀 来打球！看看最近有什么活动',

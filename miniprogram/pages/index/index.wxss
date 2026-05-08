@@ -8,6 +8,28 @@
 .banner-title { font-size: 40rpx; font-weight: 700; display: block; }
 .banner-sub { font-size: 24rpx; opacity: 0.7; margin-top: 8rpx; display: block; }
 
+.login-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e8f5e9;
+  padding: 20rpx 24rpx;
+  margin: 0 0 0 0;
+}
+.login-banner-text { font-size: 24rpx; color: #2e7d32; flex: 1; }
+.login-banner-btn {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 12rpx 28rpx;
+  border-radius: 8rpx;
+  margin-left: 16rpx;
+  line-height: 1;
+  min-width: auto;
+}
+.login-banner-btn::after { border: none; }
+
 .tab-bar {
   display: flex;
   background: #fff;
