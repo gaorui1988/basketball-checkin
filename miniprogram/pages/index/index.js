@@ -10,7 +10,8 @@ Page({
     loginLoading: false,
     showLoginPopup: false,
     tempNickName: '',
-    tempAvatarUrl: '',
+    tempAvatarPath: '',  // 临时文件路径
+    cloudAvatarUrl: '',  // 上传后的云存储URL
   },
 
   onLoad() {
@@ -29,7 +30,9 @@ Page({
     try {
       const stats = await api.getUserStats()
       this.setData({ isLoggedIn: !!(stats && stats.nickName) })
-    } catch (e) {}
+    } catch (e) {
+      console.warn('checkLogin err', e)
+    }
   },
 
   async loadActivities() {
@@ -38,6 +41,7 @@ Page({
       const activities = await api.getActivityList(this.data.tabActive)
       this.setData({ activities, loading: false })
     } catch (err) {
+      console.error('加载活动失败', err)
       this.setData({ loading: false })
     }
   },
@@ -53,42 +57,57 @@ Page({
   onShowLogin() {
     this.setData({
       showLoginPopup: true,
-      tempAvatarUrl: '',
       tempNickName: '',
+      tempAvatarPath: '',
+      cloudAvatarUrl: '',
     })
-  },
-
-  // 选择头像
-  onChooseAvatar(e) {
-    this.setData({ tempAvatarUrl: e.detail.avatarUrl })
-  },
-
-  // 输入昵称
-  onNicknameInput(e) {
-    this.setData({ tempNickName: e.detail.value })
-  },
-
-  // 保存授权
-  async onSaveProfile() {
-    const nickName = this.data.tempNickName
-    const avatarUrl = this.data.tempAvatarUrl
-    if (!nickName) {
-      wx.showToast({ title: '请填写昵称', icon: 'none' })
-      return
-    }
-    this.setData({ loginLoading: true })
-    try {
-      await api.updateUserProfile({ nickName, avatarUrl })
-      this.setData({ isLoggedIn: true, showLoginPopup: false })
-      wx.showToast({ title: '授权成功 🎉', icon: 'success' })
-    } catch (err) {
-      wx.showToast({ title: '保存失败', icon: 'none' })
-    }
-    this.setData({ loginLoading: false })
   },
 
   onClosePopup() {
     this.setData({ showLoginPopup: false })
+  },
+
+  // 选择头像（拿到临时路径）
+  onChooseAvatar(e) {
+    this.setData({ tempAvatarPath: e.detail.avatarUrl })
+  },
+
+  onNicknameInput(e) {
+    this.setData({ tempNickName: e.detail.value })
+  },
+
+  // 保存：先上传头像到云存储，再保存到数据库
+  async onSaveProfile() {
+    const nickName = this.data.tempNickName
+    const tempPath = this.data.tempAvatarPath
+    if (!nickName) {
+      wx.showToast({ title: '请填写昵称', icon: 'none' })
+      return
+    }
+
+    this.setData({ loginLoading: true })
+    try {
+      let avatarUrl = ''
+      if (tempPath) {
+        // 上传到云存储，路径为 avatars/{openid}.png
+        const cloudRes = await wx.cloud.uploadFile({
+          cloudPath: `avatars/${Date.now()}.png`,
+          filePath: tempPath,
+        })
+        avatarUrl = cloudRes.fileID
+      }
+
+      await api.updateUserProfile({ nickName, avatarUrl })
+      this.setData({
+        isLoggedIn: true,
+        showLoginPopup: false,
+      })
+      wx.showToast({ title: '设置成功 🎉', icon: 'success' })
+    } catch (err) {
+      console.error('保存失败', err)
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' })
+    }
+    this.setData({ loginLoading: false })
   },
 
   onCreate() {

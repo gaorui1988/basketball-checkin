@@ -12,7 +12,7 @@ Page({
     profileLoading: false,
     showLoginPopup: false,
     tempNickName: '',
-    tempAvatarUrl: '',
+    tempAvatarPath: '',
   },
 
   onShow() {
@@ -26,7 +26,7 @@ Page({
         api.getUserStats(),
         api.getMyActivities(),
       ])
-      
+
       const isLoggedIn = !!(stats && stats.nickName)
       const formattedActivities = (myActivities || []).map(a => ({
         ...a,
@@ -41,22 +41,25 @@ Page({
         isLoggedIn,
       })
     } catch (err) {
-      console.error(err)
+      console.error('loadData err', err)
       this.setData({ loading: false })
     }
   },
 
-  // 弹出授权
   onShowLogin() {
     this.setData({
       showLoginPopup: true,
-      tempAvatarUrl: '',
       tempNickName: '',
+      tempAvatarPath: '',
     })
   },
 
+  onClosePopup() {
+    this.setData({ showLoginPopup: false })
+  },
+
   onChooseAvatar(e) {
-    this.setData({ tempAvatarUrl: e.detail.avatarUrl })
+    this.setData({ tempAvatarPath: e.detail.avatarUrl })
   },
 
   onNicknameInput(e) {
@@ -65,13 +68,23 @@ Page({
 
   async onSaveProfile() {
     const nickName = this.data.tempNickName
-    const avatarUrl = this.data.tempAvatarUrl
+    const tempPath = this.data.tempAvatarPath
     if (!nickName) {
       wx.showToast({ title: '请填写昵称', icon: 'none' })
       return
     }
+
     this.setData({ profileLoading: true })
     try {
+      let avatarUrl = ''
+      if (tempPath) {
+        const cloudRes = await wx.cloud.uploadFile({
+          cloudPath: `avatars/${Date.now()}.png`,
+          filePath: tempPath,
+        })
+        avatarUrl = cloudRes.fileID
+      }
+
       await api.updateUserProfile({ nickName, avatarUrl })
       this.setData({
         isLoggedIn: true,
@@ -79,15 +92,12 @@ Page({
         'stats.nickName': nickName,
         'stats.avatarUrl': avatarUrl,
       })
-      wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+      wx.showToast({ title: '设置成功 🎉', icon: 'success' })
     } catch (err) {
-      wx.showToast({ title: '保存失败', icon: 'none' })
+      console.error('保存失败', err)
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' })
     }
     this.setData({ profileLoading: false })
-  },
-
-  onClosePopup() {
-    this.setData({ showLoginPopup: false })
   },
 
   onGoDetail(e) {
