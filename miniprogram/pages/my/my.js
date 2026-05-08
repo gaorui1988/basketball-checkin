@@ -9,10 +9,7 @@ Page({
     badge: null,
     loading: true,
     isLoggedIn: false,
-    profileLoading: false,
-    showLoginPopup: false,
-    tempNickName: '',
-    tempAvatarPath: '',
+    authLoading: false,
   },
 
   onShow() {
@@ -39,26 +36,15 @@ Page({
         isLoggedIn,
       })
     } catch (err) {
+      console.error('loadData err', err)
       this.setData({ loading: false })
     }
   },
 
-  onShowLogin() {
+  // 点击头像直接触发微信授权
+  async onTapAvatar() {
     if (this.data.isLoggedIn) return
-    this.setData({
-      showLoginPopup: true,
-      tempNickName: '',
-      tempAvatarPath: '',
-    })
-  },
-
-  onClosePopup() {
-    this.setData({ showLoginPopup: false })
-  },
-
-  // 一键授权微信信息
-  async onOneKeyAuth() {
-    this.setData({ profileLoading: true })
+    this.setData({ authLoading: true })
     try {
       const res = await wx.getUserProfile({
         desc: '用于排行榜展示球友信息',
@@ -68,7 +54,6 @@ Page({
         await api.updateUserProfile({ nickName, avatarUrl })
         this.setData({
           isLoggedIn: true,
-          showLoginPopup: false,
           'stats.nickName': nickName,
           'stats.avatarUrl': avatarUrl,
         })
@@ -77,52 +62,14 @@ Page({
     } catch (err) {
       const errMsg = err.errMsg || err.message || ''
       if (errMsg.includes('fail auth deny') || errMsg.includes('deny')) {
-        wx.showToast({ title: '已取消', icon: 'none' })
+        wx.showToast({ title: '已取消授权', icon: 'none' })
+      } else if (errMsg.includes('privacy')) {
+        wx.showToast({ title: '请先同意隐私协议', icon: 'none' })
       } else {
-        wx.showToast({ title: '授权失败，可手动设置', icon: 'none' })
+        wx.showToast({ title: '授权失败', icon: 'none' })
       }
     }
-    this.setData({ profileLoading: false })
-  },
-
-  onChooseAvatar(e) {
-    this.setData({ tempAvatarPath: e.detail.avatarUrl })
-  },
-
-  onNicknameInput(e) {
-    this.setData({ tempNickName: e.detail.value })
-  },
-
-  async onSaveProfile() {
-    const nickName = this.data.tempNickName
-    const tempPath = this.data.tempAvatarPath
-    if (!nickName) {
-      wx.showToast({ title: '请填写昵称', icon: 'none' })
-      return
-    }
-    this.setData({ profileLoading: true })
-    try {
-      let avatarUrl = ''
-      if (tempPath) {
-        const compressRes = await wx.compressImage({ src: tempPath, quality: 80 })
-        const cloudRes = await wx.cloud.uploadFile({
-          cloudPath: `avatars/${Date.now()}.png`,
-          filePath: compressRes.tempFilePath,
-        })
-        avatarUrl = cloudRes.fileID
-      }
-      await api.updateUserProfile({ nickName, avatarUrl })
-      this.setData({
-        isLoggedIn: true,
-        showLoginPopup: false,
-        'stats.nickName': nickName,
-        'stats.avatarUrl': avatarUrl,
-      })
-      wx.showToast({ title: '设置成功 🎉', icon: 'success' })
-    } catch (err) {
-      wx.showToast({ title: '保存失败，请重试', icon: 'none' })
-    }
-    this.setData({ profileLoading: false })
+    this.setData({ authLoading: false })
   },
 
   onGoDetail(e) {

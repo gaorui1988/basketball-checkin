@@ -4,17 +4,12 @@
   <block wx:if="{{!loading && stats}}">
     <!-- 用户卡片 -->
     <view class="user-card">
-      <view class="user-card-head" bindtap="onShowLogin">
+      <view class="user-card-head" bindtap="onTapAvatar">
         <text class="user-icon">{{stats.avatarUrl ? '' : '🏀'}}</text>
         <image wx:if="{{stats.avatarUrl}}" class="user-avatar" src="{{stats.avatarUrl}}"></image>
         <text class="user-name">{{stats.nickName || '匿名球友'}}</text>
+        <text wx:if="{{!isLoggedIn}}" class="auth-hint">点击授权微信信息</text>
       </view>
-      
-      <!-- 未授权时显示登录按钮 -->
-      <button wx:if="{{!isLoggedIn}}" class="login-btn" 
-              bindtap="onShowLogin">
-        点击设置昵称和头像
-      </button>
 
       <view class="badge-row" wx:if="{{badge}}">
         <text class="user-badge">{{badge.label}}</text>
@@ -54,36 +49,4 @@
       </view>
     </view>
   </block>
-  
-  <!-- 授权弹窗 -->
-  <view class="popup-mask" wx:if="{{showLoginPopup}}" bindtap="onClosePopup"></view>
-  <view class="popup-card" wx:if="{{showLoginPopup}}">
-    <text class="popup-title">设置资料</text>
-    <text class="popup-desc">设置后在排行榜和活动中展示你的身份</text>
-    
-    <view class="onekey-section">
-      <button class="onekey-btn" bindtap="onOneKeyAuth" loading="{{profileLoading}}">
-        📱 一键授权微信信息
-      </button>
-      <text class="onekey-hint">直接使用微信昵称和头像</text>
-    </view>
-
-    <view class="divider"><text class="divider-text">或手动设置</text></view>
-
-    <view class="manual-section">
-      <view class="avatar-section">
-        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-          <image class="avatar-preview" src="{{tempAvatarPath || '/images/default-avatar.png'}}"></image>
-        </button>
-        <text class="avatar-hint">点击换头像</text>
-      </view>
-      <input class="nickname-input" type="nickname" placeholder="输入昵称" 
-             bindinput="onNicknameInput" />
-    </view>
-
-    <view class="popup-actions">
-      <button class="popup-cancel" bindtap="onClosePopup">跳过</button>
-      <button class="popup-confirm" bindtap="onSaveProfile" loading="{{profileLoading}}">保存</button>
-    </view>
-  </view>
 </view>
