@@ -1,0 +1,39 @@
+<view class="page">
+  <!-- 顶部Banner -->
+  <view class="banner">
+    <text class="banner-title">🏀 约球打卡</text>
+    <text class="banner-sub">与球友一起，拒绝放鸽子</text>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{tabActive === 'open' ? 'active' : ''}}" 
+          data-tab="open" bindtap="onSwitchTab">即将开始</view>
+    <view class="tab-item {{tabActive === 'my' ? 'active' : ''}}" 
+          data-tab="my" bindtap="onSwitchTab">我报名的</view>
+    <view class="tab-item {{tabActive === 'past' ? 'active' : ''}}" 
+          data-tab="past" bindtap="onSwitchTab">历史记录</view>
+  </view>
+
+  <!-- 活动列表 -->
+  <scroll-view class="activity-list" scroll-y wx:if="{{!loading}}">
+    <activity-card 
+      wx:for="{{activities}}" 
+      wx:key="_id" 
+      activity="{{item}}"
+    />
+    <view class="empty-state" wx:if="{{activities.length === 0}}">
+      <text>暂无活动</text>
+      <text class="empty-hint">点击下方按钮创建第一个活动吧</text>
+    </view>
+  </scroll-view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <loading />
+  </view>
+
+  <!-- 创建按钮 -->
+  <view class="create-btn-wrap">
+    <button class="btn-primary create-btn" bindtap="onCreate">＋ 发起约球</button>
+  </view>
+</view>

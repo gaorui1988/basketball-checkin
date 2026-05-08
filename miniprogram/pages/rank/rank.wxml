@@ -1,0 +1,32 @@
+<view class="page">
+  <!-- 排行榜头部 -->
+  <view class="rank-header">
+    <text class="rank-title">🏆 球友排行</text>
+    <text class="rank-sub">靠谱程度一目了然</text>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}"><loading /></view>
+
+  <block wx:if="{{!loading}}">
+    <view class="rank-list">
+      <view class="rank-item {{index < 3 ? 'top' : ''}}" 
+            wx:for="{{rankList}}" wx:key="openid" wx:for-index="index">
+        <text class="rank-medal">{{getMedal(index)}}</text>
+        <image class="rank-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}"></image>
+        <view class="rank-info">
+          <text class="rank-name">{{item.nickName || '匿名球友'}}</text>
+          <text class="rank-grade">{{util.getGradeBadge(item.points).label}}</text>
+        </view>
+        <view class="rank-stats">
+          <text class="rank-score">{{item.points || 0}}分</text>
+          <text class="rank-detail">到场{{item.totalCheckins || 0}}/报名{{item.totalSignups || 0}}</text>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:if="{{rankList.length === 0}}">
+        <text>暂无排行数据</text>
+        <text class="empty-hint">参加活动后就会出现在这里</text>
+      </view>
+    </view>
+  </block>
+</view>

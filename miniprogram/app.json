@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/create/create",
+    "pages/detail/detail",
+    "pages/my/my",
+    "pages/rank/rank"
+  ],
+  "window": {
+    "navigationBarTitleText": "🏀 约球打卡",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#1a1a2e",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "活动",
+        "iconPath": "images/tab-ball.png",
+        "selectedIconPath": "images/tab-ball-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "images/tab-me.png",
+        "selectedIconPath": "images/tab-me-active.png"
+      },
+      {
+        "pagePath": "pages/rank/rank",
+        "text": "排行",
+        "iconPath": "images/tab-rank.png",
+        "selectedIconPath": "images/tab-rank-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "activity-card": "/components/activity-card/activity-card",
+    "stat-card": "/components/stat-card/stat-card"
+  },
+  "sitemapLocation": "sitemap.json"
+}

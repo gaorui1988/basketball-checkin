@@ -1,0 +1,45 @@
+<view class="form-page">
+  <view class="form-group">
+    <text class="form-label">活动名称</text>
+    <input class="form-input" placeholder="例：周三野球局" 
+           value="{{title}}" bindinput="onInput" data-field="title" />
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="picker">{{date}}</view>
+    </picker>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">时间</text>
+    <picker mode="time" value="{{time}}" bindchange="onTimeChange">
+      <view class="picker">{{time}}</view>
+    </picker>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">场地</text>
+    <input class="form-input" placeholder="例：XX体育馆3号场" 
+           value="{{location}}" bindinput="onInput" data-field="location" />
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">最多报名人数</text>
+    <slider value="{{maxPlayers}}" min="4" max="30" step="2" show-value 
+            bindchange="onPlayersChange" />
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">最少到场人数</text>
+    <slider value="{{minPlayers}}" min="2" max="20" step="2" show-value 
+            bindchange="onMinPlayersChange" />
+  </view>
+
+  <view class="form-actions">
+    <button class="btn-primary" bindtap="onSubmit" loading="{{submitLoading}}">
+      发起约球 🏀
+    </button>
+  </view>
+</view>

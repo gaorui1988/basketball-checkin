@@ -1,0 +1,46 @@
+.page { padding-bottom: 60rpx; }
+
+.user-card {
+  text-align: center;
+  padding: 60rpx 32rpx 40rpx;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #fff;
+}
+.user-icon { font-size: 80rpx; display: block; margin-bottom: 16rpx; }
+.user-name { font-size: 32rpx; font-weight: 600; display: block; }
+.badge-row { margin-top: 12rpx; }
+.user-badge {
+  display: inline-block;
+  padding: 4rpx 24rpx;
+  border-radius: 20rpx;
+  background: rgba(255,255,255,0.15);
+  font-size: 24rpx;
+}
+.points-display { margin-top: 24rpx; }
+.points-num { font-size: 64rpx; font-weight: 700; display: block; }
+.points-label { font-size: 24rpx; opacity: 0.7; }
+
+.stats-row {
+  display: flex;
+  gap: 12rpx;
+  padding: 24rpx;
+}
+
+.rules-card { margin-top: 0; }
+.rules-title { font-size: 28rpx; font-weight: 600; display: block; margin-bottom: 16rpx; }
+.rule-item { font-size: 24rpx; margin-bottom: 12rpx; }
+.rule-icon { margin-right: 8rpx; }
+
+.my-activity-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+.my-activity-item:last-child { border-bottom: none; }
+.act-title { font-size: 26rpx; color: #333; }
+.act-status { font-size: 24rpx; }
+.act-status.checked_in { color: #27ae60; }
+.act-status.no_show { color: #e74c3c; }
+.act-status.signed { color: #3498db; }
+.act-status.cancelled { color: #95a5a6; }

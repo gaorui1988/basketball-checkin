@@ -1,0 +1,23 @@
+<view class="activity-card" bindtap="onTap">
+  <view class="card-header">
+    <view class="status-badge {{activity.status}}">{{statusText}}</view>
+    <view class="date-info">
+      <text class="date">{{formatDate(activity.date)}}</text>
+      <text class="weekday">{{weekday}}</text>
+    </view>
+    <text class="time">{{activity.time}}</text>
+  </view>
+  <view class="card-body">
+    <text class="title">{{activity.title}}</text>
+    <view class="meta">
+      <text class="location">📍 {{activity.location}}</text>
+      <text class="players">{{activity.signedCount}}/{{activity.maxPlayers}}人</text>
+    </view>
+  </view>
+  <view class="card-footer">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+    <text class="creator">{{activity.creatorName || '匿名'} 发起</text>
+  </view>
+</view>

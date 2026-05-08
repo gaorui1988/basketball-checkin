@@ -1,0 +1,65 @@
+.activity-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 16rpx 24rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+  transition: transform 0.2s;
+}
+.activity-card:active { transform: scale(0.98); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.status-badge {
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+.status-badge.open { background: #e8f5e9; color: #2e7d32; }
+.status-badge.playing { background: #e3f2fd; color: #1565c0; }
+.status-badge.closed { background: #fafafa; color: #999; }
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  margin-right: 16rpx;
+}
+.date { font-size: 28rpx; font-weight: 600; color: #333; }
+.weekday { font-size: 20rpx; color: #999; }
+.time { font-size: 26rpx; color: #666; margin-left: auto; }
+
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1a2e;
+  display: block;
+  margin-bottom: 12rpx;
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+}
+.location { font-size: 24rpx; color: #666; }
+.players { font-size: 24rpx; color: #e67e22; font-weight: 600; }
+
+.card-footer { margin-top: 20rpx; }
+.progress-bar {
+  height: 8rpx;
+  background: #eee;
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  border-radius: 4rpx;
+  transition: width 0.3s;
+}
+.creator { font-size: 20rpx; color: #bbb; }

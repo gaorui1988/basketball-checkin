@@ -1,0 +1,18 @@
+.stat-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 20rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+  flex: 1;
+  min-width: 140rpx;
+}
+.stat-icon { font-size: 40rpx; display: block; margin-bottom: 8rpx; }
+.stat-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  display: block;
+}
+.stat-info { margin-top: 8rpx; }
+.stat-title { font-size: 22rpx; color: #999; display: block; }
+.stat-unit { font-size: 20rpx; color: #bbb; display: block; }

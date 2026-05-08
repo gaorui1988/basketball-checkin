@@ -1,0 +1,47 @@
+<view class="page">
+  <view class="loading-container" wx:if="{{loading}}"><loading /></view>
+
+  <block wx:if="{{!loading && stats}}">
+    <!-- 用户卡片 -->
+    <view class="user-card">
+      <text class="user-icon">🏀</text>
+      <text class="user-name">{{stats.nickName || '球友'}}</text>
+      <view class="badge-row">
+        <text class="user-badge" wx:if="{{badge}}">{{badge.label}}</text>
+      </view>
+      <view class="points-display">
+        <text class="points-num">{{stats.points || 0}}</text>
+        <text class="points-label">积分</text>
+      </view>
+    </view>
+
+    <!-- 统计数据 -->
+    <view class="stats-row">
+      <stat-card icon="📝" title="报名" value="{{stats.totalSignups || 0}}" color="#3498db"></stat-card>
+      <stat-card icon="✅" title="到场" value="{{stats.totalCheckins || 0}}" color="#27ae60"></stat-card>
+      <stat-card icon="🕊️" title="放鸽子" value="{{stats.totalNoShows || 0}}" color="#e74c3c"></stat-card>
+      <stat-card icon="↩️" title="取消" value="{{stats.totalCancels || 0}}" color="#e67e22"></stat-card>
+    </view>
+
+    <!-- 积分规则说明 -->
+    <view class="card rules-card">
+      <text class="rules-title">📋 积分规则</text>
+      <view class="rule-item"><text class="rule-icon">🟢</text> 报名+签到 → +10分</view>
+      <view class="rule-item"><text class="rule-icon">🟡</text> 取消报名 → -5分</view>
+      <view class="rule-item"><text class="rule-icon">🔴</text> 放鸽子 → -20分</view>
+      <view class="rule-item"><text class="rule-icon">🏆</text> 连续5次到场 → 额外+15分</view>
+    </view>
+
+    <!-- 我的活动 -->
+    <view class="card" wx:if="{{myActivities.length > 0}}">
+      <view class="section-title"><text>📋 最近活动</text></view>
+      <view class="activity-list">
+        <view class="my-activity-item" wx:for="{{myActivities}}" wx:key="_id" 
+              data-id="{{item._id}}" bindtap="onGoDetail">
+          <text class="act-title">{{item.activityTitle}}</text>
+          <text class="act-status {{item.status}}">{{util.getSignupStatusText(item.status)}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

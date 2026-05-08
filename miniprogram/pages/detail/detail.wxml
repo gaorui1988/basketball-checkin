@@ -1,0 +1,94 @@
+<view class="page" wx:if="{{!loading && activity}}">
+  <!-- 活动头部 -->
+  <view class="detail-header">
+    <view class="status-badge large {{activity.status}}">{{activity.status === 'open' ? '报名中' : activity.status === 'playing' ? '进行中' : '已结束'}}</view>
+    <text class="detail-title">{{activity.title}}</text>
+    
+    <view class="detail-meta">
+      <view class="meta-item">
+        <text class="meta-icon">📅</text>
+        <text>{{util.formatDate(activity.date)}} {{util.formatWeekday(activity.date)}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-icon">⏰</text>
+        <text>{{activity.time}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-icon">📍</text>
+        <text>{{activity.location}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-icon">👥</text>
+        <text>{{activity.signedCount}}/{{activity.maxPlayers}}人 (至少{{activity.minPlayers}}人到场)</text>
+      </view>
+    </view>
+
+    <view class="detail-progress">
+      <view class="progress-bar big">
+        <view class="progress-fill" style="width: {{activity.signedCount / activity.maxPlayers * 100}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar card">
+    <block wx:if="{{activity.status === 'open' || activity.status === 'playing'}}">
+      <button wx:if="{{!mySignup || mySignup.status === 'cancelled'}}" 
+              class="btn-primary btn-small" bindtap="onSignup" loading="{{actionLoading}}">
+        📝 报名参加
+      </button>
+      <button wx:elif="{{mySignup.status === 'signed'}}" 
+              class="btn-success btn-small" bindtap="onCheckin" loading="{{actionLoading}}">
+        ✅ 签到打卡
+      </button>
+      <button wx:elif="{{mySignup.status === 'checked_in'}}" 
+              class="btn-primary btn-small" style="background:#95a5a6" disabled>
+        ✅ 已签到
+      </button>
+      <button wx:elif="{{mySignup.status === 'no_show'}}"
+              class="btn-danger btn-small" disabled>
+        ❌ 未到场
+      </button>
+      <button wx:if="{{mySignup && (mySignup.status === 'signed')}}" 
+              class="btn-danger btn-small" style="background:#e67e22" bindtap="onCancel" loading="{{actionLoading}}">
+        ↩️ 取消报名 (-5积分)
+      </button>
+    </block>
+  </view>
+
+  <!-- 已报名成员 -->
+  <view class="card">
+    <view class="section-title">
+      <text>👥 已报名 {{signups.length}}人</text>
+    </view>
+    <view class="member-list">
+      <view class="member-item" wx:for="{{signups}}" wx:key="_id">
+        <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}"></image>
+        <view class="member-info">
+          <text class="member-name">{{item.nickName || '匿名球友'}}</text>
+          <text class="member-status {{item.status}}">{{util.getSignupStatusText(item.status)}}</text>
+        </view>
+        <view wx:if="{{isCreator && item.status === 'signed' && activity.status !== 'closed'}}" 
+              class="mark-btn" bindtap="onMarkNoShow" data-openid="{{item.openid}}">
+          🕊️ 放鸽子
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的积分 -->
+  <view class="card" wx:if="{{badge}}">
+    <view class="section-title"><text>🎯 我的信誉</text></view>
+    <view class="badge-display">
+      <text class="badge-emoji">{{badge.label}}</text>
+    </view>
+  </view>
+
+  <view class="footer-tip" wx:if="{{isCreator}}">
+    <text class="tip-text">💡 你是活动发起人，可以在活动结束后标记未到场成员</text>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <loading />
+</view>

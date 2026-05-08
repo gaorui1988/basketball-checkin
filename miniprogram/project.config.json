@@ -1,0 +1,25 @@
+{
+  "description": "🏀 微信群篮球活动打卡工具",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": true,
+    "autoAudits": true,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "babelSetting": { "outputPath": "", "ignore": [], "disablePlugins": [], "outputPath": "" },
+    "condition": false
+  },
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "libVersion": "3.3.4",
+  "appid": "wxf7d1caf0f74959eb",
+  "projectname": "basketball-checkin",
+  "condition": {}
+}
