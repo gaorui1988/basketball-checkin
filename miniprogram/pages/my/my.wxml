@@ -1,5 +1,5 @@
 <view class="page">
-  <view class="loading-container" wx:if="{{loading}}"><loading /></view>
+  <view class="loading-container" wx:if="{{loading}}"><text>加载中...</text></view>
 
   <block wx:if="{{!loading && stats}}">
     <!-- 用户卡片 -->
@@ -7,7 +7,7 @@
       <text class="user-icon">🏀</text>
       <text class="user-name">{{stats.nickName || '球友'}}</text>
       <view class="badge-row">
-        <text class="user-badge" wx:if="{{badge}}">{{badge.label}}</text>
+        <text class="user-badge" wx:if="{{badge}}">{{badge && badge.label}}</text>
       </view>
       <view class="points-display">
         <text class="points-num">{{stats.points || 0}}</text>
@@ -39,7 +39,7 @@
         <view class="my-activity-item" wx:for="{{myActivities}}" wx:key="_id" 
               data-id="{{item._id}}" bindtap="onGoDetail">
           <text class="act-title">{{item.activityTitle}}</text>
-          <text class="act-status {{item.status}}">{{util.getSignupStatusText(item.status)}}</text>
+          <text class="act-status {{item.status}}">{{item.displayStatus}}</text>
         </view>
       </view>
     </view>

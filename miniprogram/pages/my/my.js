@@ -21,9 +21,16 @@ Page({
         api.getUserStats(),
         api.getMyActivities(),
       ])
+      
+      // 预计算显示值
+      const formattedActivities = (myActivities || []).map(a => ({
+        ...a,
+        displayStatus: util.getSignupStatusText(a.status),
+      }))
+
       this.setData({
         stats,
-        myActivities: myActivities || [],
+        myActivities: formattedActivities,
         loading: false,
         badge: util.getGradeBadge(stats?.points || 0),
       })

@@ -29,7 +29,7 @@
   </scroll-view>
 
   <view class="loading-container" wx:if="{{loading}}">
-    <loading />
+    <text>加载中...</text>
   </view>
 
   <!-- 创建按钮 -->

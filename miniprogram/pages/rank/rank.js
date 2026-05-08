@@ -6,7 +6,6 @@ Page({
   data: {
     rankList: [],
     loading: true,
-    tabActive: 'points',  // points | attendance
   },
 
   onShow() {
@@ -17,24 +16,17 @@ Page({
     this.setData({ loading: true })
     try {
       const data = await api.getRank()
+      const list = (data || []).map((item, index) => ({
+        ...item,
+        medal: index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`,
+        gradeLabel: util.getGradeBadge(item.points).label,
+      }))
       this.setData({
-        rankList: data || [],
+        rankList: list,
         loading: false,
       })
     } catch (err) {
       this.setData({ loading: false })
     }
-  },
-
-  onSwitchTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    this.setData({ tabActive: tab }, () => this.loadRank())
-  },
-
-  getMedal(index) {
-    if (index === 0) return '🥇'
-    if (index === 1) return '🥈'
-    if (index === 2) return '🥉'
-    return `#${index + 1}`
   },
 })

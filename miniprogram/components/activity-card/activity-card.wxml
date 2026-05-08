@@ -2,7 +2,7 @@
   <view class="card-header">
     <view class="status-badge {{activity.status}}">{{statusText}}</view>
     <view class="date-info">
-      <text class="date">{{formatDate(activity.date)}}</text>
+      <text class="date">{{displayDate}}</text>
       <text class="weekday">{{weekday}}</text>
     </view>
     <text class="time">{{activity.time}}</text>
@@ -18,6 +18,6 @@
     <view class="progress-bar">
       <view class="progress-fill" style="width: {{progressPercent}}%"></view>
     </view>
-    <text class="creator">{{activity.creatorName || '匿名'} 发起</text>
+    <text class="creator">{{activity.creatorName || '匿名'}} 发起</text>
   </view>
 </view>

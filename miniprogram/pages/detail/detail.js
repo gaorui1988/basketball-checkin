@@ -7,10 +7,13 @@ Page({
     activity: null,
     signups: [],
     loading: true,
-    mySignup: null,       // 我当前的报名记录
+    mySignup: null,
     isCreator: false,
     badge: null,
     actionLoading: false,
+    statusText: '',
+    displayDate: '',
+    weekday: '',
   },
 
   onLoad(options) {
@@ -18,17 +21,31 @@ Page({
     this.loadDetail()
   },
 
+  onShow() {
+    if (this.activityId && !this.data.loading) {
+      this.loadDetail()
+    }
+  },
+
   async loadDetail() {
     this.setData({ loading: true })
     try {
       const data = await api.getActivityDetail(this.activityId)
+      const act = data.activity
+      
       this.setData({
-        activity: data.activity,
-        signups: data.signups,
+        activity: act,
+        signups: data.signups.map(s => ({
+          ...s,
+          displayStatus: util.getSignupStatusText(s.status),
+        })),
         mySignup: data.mySignup,
         isCreator: data.isCreator,
         loading: false,
         badge: util.getGradeBadge(data.myStats?.points || 0),
+        statusText: act.status === 'open' ? '报名中' : act.status === 'playing' ? '进行中' : '已结束',
+        displayDate: util.formatDate(act.date),
+        weekday: util.formatWeekday(act.date),
       })
     } catch (err) {
       console.error(err)
@@ -58,7 +75,7 @@ Page({
           this.setData({ actionLoading: true })
           try {
             await api.cancelSignup(this.activityId)
-            wx.showToast({ title: '已取消', icon: 'success' })
+            wx.showToast({ title: '已取消，-5积分', icon: 'success' })
             this.loadDetail()
           } catch (err) {
             wx.showToast({ title: err.errMsg || '取消失败', icon: 'none' })
@@ -73,7 +90,7 @@ Page({
     this.setData({ actionLoading: true })
     try {
       await api.checkin(this.activityId)
-      wx.showToast({ title: '签到成功 ✅ +10积分', icon: 'success' })
+      wx.showToast({ title: '签到成功 ✅', icon: 'success' })
       this.loadDetail()
     } catch (err) {
       wx.showToast({ title: err.errMsg || '签到失败', icon: 'none' })
@@ -81,12 +98,11 @@ Page({
     this.setData({ actionLoading: false })
   },
 
-  // 发起人：标记某人放鸽子
   async onMarkNoShow(e) {
     const openid = e.currentTarget.dataset.openid
     wx.showModal({
       title: '确认放鸽子？',
-      content: '标记后此人将扣除20积分',
+      content: '标记后将扣除20积分',
       success: async (res) => {
         if (res.confirm) {
           this.setData({ actionLoading: true })

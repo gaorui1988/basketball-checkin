@@ -1,13 +1,13 @@
 <view class="page" wx:if="{{!loading && activity}}">
   <!-- 活动头部 -->
   <view class="detail-header">
-    <view class="status-badge large {{activity.status}}">{{activity.status === 'open' ? '报名中' : activity.status === 'playing' ? '进行中' : '已结束'}}</view>
+    <view class="status-badge large {{activity.status}}">{{statusText}}</view>
     <text class="detail-title">{{activity.title}}</text>
     
     <view class="detail-meta">
       <view class="meta-item">
         <text class="meta-icon">📅</text>
-        <text>{{util.formatDate(activity.date)}} {{util.formatWeekday(activity.date)}}</text>
+        <text>{{displayDate}} {{weekday}}</text>
       </view>
       <view class="meta-item">
         <text class="meta-icon">⏰</text>
@@ -49,7 +49,7 @@
               class="btn-danger btn-small" disabled>
         ❌ 未到场
       </button>
-      <button wx:if="{{mySignup && (mySignup.status === 'signed')}}" 
+      <button wx:if="{{mySignup && mySignup.status === 'signed'}}" 
               class="btn-danger btn-small" style="background:#e67e22" bindtap="onCancel" loading="{{actionLoading}}">
         ↩️ 取消报名 (-5积分)
       </button>
@@ -66,7 +66,7 @@
         <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}"></image>
         <view class="member-info">
           <text class="member-name">{{item.nickName || '匿名球友'}}</text>
-          <text class="member-status {{item.status}}">{{util.getSignupStatusText(item.status)}}</text>
+          <text class="member-status {{item.status}}">{{item.displayStatus}}</text>
         </view>
         <view wx:if="{{isCreator && item.status === 'signed' && activity.status !== 'closed'}}" 
               class="mark-btn" bindtap="onMarkNoShow" data-openid="{{item.openid}}">
@@ -76,7 +76,7 @@
     </view>
   </view>
 
-  <!-- 我的积分 -->
+  <!-- 我的信誉 -->
   <view class="card" wx:if="{{badge}}">
     <view class="section-title"><text>🎯 我的信誉</text></view>
     <view class="badge-display">
@@ -90,5 +90,5 @@
 </view>
 
 <view class="loading-container" wx:if="{{loading}}">
-  <loading />
+  <text>加载中...</text>
 </view>
