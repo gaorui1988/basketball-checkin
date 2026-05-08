@@ -8,6 +8,8 @@ Page({
     myActivities: [],
     badge: null,
     loading: true,
+    isLoggedIn: false,
+    profileLoading: false,
   },
 
   onShow() {
@@ -22,7 +24,7 @@ Page({
         api.getMyActivities(),
       ])
       
-      // 预计算显示值
+      const isLoggedIn = !!(stats && stats.nickName)
       const formattedActivities = (myActivities || []).map(a => ({
         ...a,
         displayStatus: util.getSignupStatusText(a.status),
@@ -33,6 +35,7 @@ Page({
         myActivities: formattedActivities,
         loading: false,
         badge: util.getGradeBadge(stats?.points || 0),
+        isLoggedIn,
       })
     } catch (err) {
       console.error(err)
@@ -40,8 +43,35 @@ Page({
     }
   },
 
+  async onGetProfile() {
+    this.setData({ profileLoading: true })
+    try {
+      const res = await wx.getUserProfile({
+        desc: '用于排行榜展示球友信息',
+      })
+      if (res && res.userInfo) {
+        const { nickName, avatarUrl } = res.userInfo
+        await api.updateUserProfile({ nickName, avatarUrl })
+        this.setData({
+          'stats.nickName': nickName,
+          'stats.avatarUrl': avatarUrl,
+          isLoggedIn: true,
+        })
+        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+      }
+    } catch (e) {
+      // 用户拒绝
+      wx.showToast({ title: '已取消授权', icon: 'none' })
+    }
+    this.setData({ profileLoading: false })
+  },
+
   onGoDetail(e) {
     const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: `/pages/detail/detail?id=${id}` })
+  },
+
+  onGoRank() {
+    wx.switchTab({ url: '/pages/rank/rank' })
   },
 })

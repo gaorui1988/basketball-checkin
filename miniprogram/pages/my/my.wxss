@@ -7,7 +7,20 @@
   color: #fff;
 }
 .user-icon { font-size: 80rpx; display: block; margin-bottom: 16rpx; }
+.user-avatar { width: 120rpx; height: 120rpx; border-radius: 50%; margin-bottom: 16rpx; }
 .user-name { font-size: 32rpx; font-weight: 600; display: block; }
+
+.login-btn {
+  margin-top: 20rpx;
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 2rpx solid rgba(255,255,255,0.3);
+  border-radius: 12rpx;
+  padding: 16rpx 40rpx;
+  font-size: 26rpx;
+}
+.login-btn::after { border: none; }
 .badge-row { margin-top: 12rpx; }
 .user-badge {
   display: inline-block;

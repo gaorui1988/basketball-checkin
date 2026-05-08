@@ -4,10 +4,18 @@
   <block wx:if="{{!loading && stats}}">
     <!-- 用户卡片 -->
     <view class="user-card">
-      <text class="user-icon">🏀</text>
-      <text class="user-name">{{stats.nickName || '球友'}}</text>
-      <view class="badge-row">
-        <text class="user-badge" wx:if="{{badge}}">{{badge && badge.label}}</text>
+      <text class="user-icon">{{stats.avatarUrl ? '' : '🏀'}}</text>
+      <image wx:if="{{stats.avatarUrl}}" class="user-avatar" src="{{stats.avatarUrl}}"></image>
+      <text class="user-name">{{stats.nickName || '匿名球友'}}</text>
+      
+      <!-- 未授权时显示登录按钮 -->
+      <button wx:if="{{!isLoggedIn}}" class="login-btn" 
+              bindtap="onGetProfile" loading="{{profileLoading}}">
+        获取微信头像和昵称
+      </button>
+
+      <view class="badge-row" wx:if="{{badge}}">
+        <text class="user-badge">{{badge.label}}</text>
       </view>
       <view class="points-display">
         <text class="points-num">{{stats.points || 0}}</text>
@@ -23,21 +31,21 @@
       <stat-card icon="↩️" title="取消" value="{{stats.totalCancels || 0}}" color="#e67e22"></stat-card>
     </view>
 
-    <!-- 积分规则说明 -->
+    <!-- 积分规则 -->
     <view class="card rules-card">
       <text class="rules-title">📋 积分规则</text>
-      <view class="rule-item"><text class="rule-icon">🟢</text> 报名+签到 → +10分</view>
+      <view class="rule-item"><text class="rule-icon">🟢</text> 报名+签到到场 → +10分</view>
       <view class="rule-item"><text class="rule-icon">🟡</text> 取消报名 → -5分</view>
-      <view class="rule-item"><text class="rule-icon">🔴</text> 放鸽子 → -20分</view>
+      <view class="rule-item"><text class="rule-icon">🔴</text> 放鸽子(报名未到场) → -20分</view>
       <view class="rule-item"><text class="rule-icon">🏆</text> 连续5次到场 → 额外+15分</view>
     </view>
 
-    <!-- 我的活动 -->
+    <!-- 最近活动 -->
     <view class="card" wx:if="{{myActivities.length > 0}}">
       <view class="section-title"><text>📋 最近活动</text></view>
       <view class="activity-list">
         <view class="my-activity-item" wx:for="{{myActivities}}" wx:key="_id" 
-              data-id="{{item._id}}" bindtap="onGoDetail">
+              data-id="{{item.activityId}}" bindtap="onGoDetail">
           <text class="act-title">{{item.activityTitle}}</text>
           <text class="act-status {{item.status}}">{{item.displayStatus}}</text>
         </view>
