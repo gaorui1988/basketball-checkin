@@ -47,6 +47,7 @@ Page({
   },
 
   onShowLogin() {
+    if (this.data.isLoggedIn) return
     this.setData({
       showLoginPopup: true,
       tempNickName: '',

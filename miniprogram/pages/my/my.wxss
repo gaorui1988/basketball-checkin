@@ -7,6 +7,7 @@
   color: #fff;
 }
 .user-icon { font-size: 80rpx; display: block; margin-bottom: 16rpx; }
+.user-card-head { cursor: pointer; }
 .user-avatar { width: 120rpx; height: 120rpx; border-radius: 50%; margin-bottom: 16rpx; }
 .user-name { font-size: 32rpx; font-weight: 600; display: block; }
 

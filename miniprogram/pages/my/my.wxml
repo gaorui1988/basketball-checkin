@@ -4,14 +4,16 @@
   <block wx:if="{{!loading && stats}}">
     <!-- 用户卡片 -->
     <view class="user-card">
-      <text class="user-icon">{{stats.avatarUrl ? '' : '🏀'}}</text>
-      <image wx:if="{{stats.avatarUrl}}" class="user-avatar" src="{{stats.avatarUrl}}"></image>
-      <text class="user-name">{{stats.nickName || '匿名球友'}}</text>
+      <view class="user-card-head" bindtap="onShowLogin">
+        <text class="user-icon">{{stats.avatarUrl ? '' : '🏀'}}</text>
+        <image wx:if="{{stats.avatarUrl}}" class="user-avatar" src="{{stats.avatarUrl}}"></image>
+        <text class="user-name">{{stats.nickName || '匿名球友'}}</text>
+      </view>
       
       <!-- 未授权时显示登录按钮 -->
       <button wx:if="{{!isLoggedIn}}" class="login-btn" 
               bindtap="onShowLogin">
-        设置头像和昵称
+        点击设置昵称和头像
       </button>
 
       <view class="badge-row" wx:if="{{badge}}">
@@ -61,7 +63,7 @@
     
     <view class="avatar-section">
       <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-        <image class="avatar-preview" src="{{tempAvatarUrl || '/images/default-avatar.png'}}"></image>
+        <image class="avatar-preview" src="{{tempAvatarPath || '/images/default-avatar.png'}}"></image>
       </button>
       <text class="avatar-hint">点击换头像</text>
     </view>
