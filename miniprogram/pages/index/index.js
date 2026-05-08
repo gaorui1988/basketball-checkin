@@ -10,8 +10,8 @@ Page({
     loginLoading: false,
     showLoginPopup: false,
     tempNickName: '',
-    tempAvatarPath: '',  // 临时文件路径
-    cloudAvatarUrl: '',  // 上传后的云存储URL
+    tempAvatarPath: '',
+    oneKeyMode: false,  // true=一键授权, false=手动设置
   },
 
   onLoad() {
@@ -20,19 +20,15 @@ Page({
   },
 
   onShow() {
-    if (!this.data.loading) {
-      this.loadActivities()
-      this.checkLogin()
-    }
+    if (!this.data.loading) this.loadActivities()
+    if (!this.data.showLoginPopup) this.checkLogin()
   },
 
   async checkLogin() {
     try {
       const stats = await api.getUserStats()
       this.setData({ isLoggedIn: !!(stats && stats.nickName) })
-    } catch (e) {
-      console.warn('checkLogin err', e)
-    }
+    } catch (e) {}
   },
 
   async loadActivities() {
@@ -41,25 +37,21 @@ Page({
       const activities = await api.getActivityList(this.data.tabActive)
       this.setData({ activities, loading: false })
     } catch (err) {
-      console.error('加载活动失败', err)
       this.setData({ loading: false })
     }
   },
 
   onSwitchTab(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({ tabActive: tab }, () => {
-      this.loadActivities()
-    })
+    this.setData({ tabActive: tab }, () => this.loadActivities())
   },
 
-  // 弹出授权窗口
   onShowLogin() {
     this.setData({
       showLoginPopup: true,
+      oneKeyMode: false,
       tempNickName: '',
       tempAvatarPath: '',
-      cloudAvatarUrl: '',
     })
   },
 
@@ -67,16 +59,57 @@ Page({
     this.setData({ showLoginPopup: false })
   },
 
-  // 选择头像（拿到临时路径）
+  // 一键授权微信信息
+  async onOneKeyAuth() {
+    this.setData({ loginLoading: true })
+    try {
+      const res = await wx.getUserProfile({
+        desc: '用于排行榜展示球友信息',
+      })
+      if (res && res.userInfo) {
+        const { nickName, avatarUrl } = res.userInfo
+        await api.updateUserProfile({ nickName, avatarUrl })
+        this.setData({
+          isLoggedIn: true,
+          showLoginPopup: false,
+        })
+        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+      }
+    } catch (err) {
+      const errMsg = err.errMsg || err.message || ''
+      if (errMsg.includes('fail auth deny') || errMsg.includes('deny')) {
+        // 用户拒绝授权 → 切到手动模式
+        this.setData({ oneKeyMode: false })
+        wx.showToast({ title: '已取消，可手动设置', icon: 'none' })
+      } else if (errMsg.includes('privacy')) {
+        // 隐私协议未同意，提示去设置
+        wx.showToast({ title: '请先同意隐私协议', icon: 'none' })
+      } else {
+        // 其他错误，切到手动模式
+        this.setData({ oneKeyMode: false })
+        wx.showToast({ title: '授权失败，请手动设置', icon: 'none' })
+      }
+    }
+    this.setData({ loginLoading: false })
+  },
+
+  // 手动设置：选择头像
   onChooseAvatar(e) {
-    this.setData({ tempAvatarPath: e.detail.avatarUrl })
+    this.setData({
+      oneKeyMode: true,
+      tempAvatarPath: e.detail.avatarUrl,
+    })
   },
 
+  // 手动设置：输入昵称
   onNicknameInput(e) {
-    this.setData({ tempNickName: e.detail.value })
+    this.setData({
+      oneKeyMode: true,
+      tempNickName: e.detail.value,
+    })
   },
 
-  // 保存：先压缩 → 上传头像到云存储 → 再保存到数据库
+  // 保存手动设置
   async onSaveProfile() {
     const nickName = this.data.tempNickName
     const tempPath = this.data.tempAvatarPath
@@ -84,31 +117,21 @@ Page({
       wx.showToast({ title: '请填写昵称', icon: 'none' })
       return
     }
-
     this.setData({ loginLoading: true })
     try {
       let avatarUrl = ''
       if (tempPath) {
-        // 先压缩图片（上传限制2MB）
-        const compressRes = await wx.compressImage({
-          src: tempPath,
-          quality: 80,
-        })
+        const compressRes = await wx.compressImage({ src: tempPath, quality: 80 })
         const cloudRes = await wx.cloud.uploadFile({
           cloudPath: `avatars/${Date.now()}.png`,
           filePath: compressRes.tempFilePath,
         })
         avatarUrl = cloudRes.fileID
       }
-
       await api.updateUserProfile({ nickName, avatarUrl })
-      this.setData({
-        isLoggedIn: true,
-        showLoginPopup: false,
-      })
+      this.setData({ isLoggedIn: true, showLoginPopup: false })
       wx.showToast({ title: '设置成功 🎉', icon: 'success' })
     } catch (err) {
-      console.error('保存失败', err)
       wx.showToast({ title: '保存失败，请重试', icon: 'none' })
     }
     this.setData({ loginLoading: false })
@@ -119,9 +142,6 @@ Page({
   },
 
   onShareAppMessage() {
-    return {
-      title: '🏀 组一波！快来报名',
-      path: '/pages/index/index',
-    }
+    return { title: '🏀 组一波！快来报名', path: '/pages/index/index' }
   },
 })

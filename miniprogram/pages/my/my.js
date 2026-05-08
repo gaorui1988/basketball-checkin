@@ -26,13 +26,11 @@ Page({
         api.getUserStats(),
         api.getMyActivities(),
       ])
-
       const isLoggedIn = !!(stats && stats.nickName)
       const formattedActivities = (myActivities || []).map(a => ({
         ...a,
         displayStatus: util.getSignupStatusText(a.status),
       }))
-
       this.setData({
         stats,
         myActivities: formattedActivities,
@@ -41,7 +39,6 @@ Page({
         isLoggedIn,
       })
     } catch (err) {
-      console.error('loadData err', err)
       this.setData({ loading: false })
     }
   },
@@ -59,6 +56,35 @@ Page({
     this.setData({ showLoginPopup: false })
   },
 
+  // 一键授权微信信息
+  async onOneKeyAuth() {
+    this.setData({ profileLoading: true })
+    try {
+      const res = await wx.getUserProfile({
+        desc: '用于排行榜展示球友信息',
+      })
+      if (res && res.userInfo) {
+        const { nickName, avatarUrl } = res.userInfo
+        await api.updateUserProfile({ nickName, avatarUrl })
+        this.setData({
+          isLoggedIn: true,
+          showLoginPopup: false,
+          'stats.nickName': nickName,
+          'stats.avatarUrl': avatarUrl,
+        })
+        wx.showToast({ title: '授权成功 🎉', icon: 'success' })
+      }
+    } catch (err) {
+      const errMsg = err.errMsg || err.message || ''
+      if (errMsg.includes('fail auth deny') || errMsg.includes('deny')) {
+        wx.showToast({ title: '已取消', icon: 'none' })
+      } else {
+        wx.showToast({ title: '授权失败，可手动设置', icon: 'none' })
+      }
+    }
+    this.setData({ profileLoading: false })
+  },
+
   onChooseAvatar(e) {
     this.setData({ tempAvatarPath: e.detail.avatarUrl })
   },
@@ -74,23 +100,17 @@ Page({
       wx.showToast({ title: '请填写昵称', icon: 'none' })
       return
     }
-
     this.setData({ profileLoading: true })
     try {
       let avatarUrl = ''
       if (tempPath) {
-        // 先压缩图片（上传限制2MB）
-        const compressRes = await wx.compressImage({
-          src: tempPath,
-          quality: 80,
-        })
+        const compressRes = await wx.compressImage({ src: tempPath, quality: 80 })
         const cloudRes = await wx.cloud.uploadFile({
           cloudPath: `avatars/${Date.now()}.png`,
           filePath: compressRes.tempFilePath,
         })
         avatarUrl = cloudRes.fileID
       }
-
       await api.updateUserProfile({ nickName, avatarUrl })
       this.setData({
         isLoggedIn: true,
@@ -100,7 +120,6 @@ Page({
       })
       wx.showToast({ title: '设置成功 🎉', icon: 'success' })
     } catch (err) {
-      console.error('保存失败', err)
       wx.showToast({ title: '保存失败，请重试', icon: 'none' })
     }
     this.setData({ profileLoading: false })

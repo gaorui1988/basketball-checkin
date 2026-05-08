@@ -50,19 +50,30 @@
   <view class="popup-mask" wx:if="{{showLoginPopup}}" bindtap="onClosePopup"></view>
   <view class="popup-card" wx:if="{{showLoginPopup}}">
     <text class="popup-title">设置资料</text>
-    <text class="popup-desc">设置昵称和头像后，球友才知道你是谁</text>
+    <text class="popup-desc">设置后在排行榜和活动中展示你的身份</text>
     
-    <!-- 选择头像 -->
-    <view class="avatar-section">
-      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-        <image class="avatar-preview" src="{{tempAvatarPath || '/images/default-avatar.png'}}"></image>
+    <!-- 一键授权 -->
+    <view class="onekey-section">
+      <button class="onekey-btn" bindtap="onOneKeyAuth" loading="{{loginLoading}}">
+        📱 一键授权微信信息
       </button>
-      <text class="avatar-hint">点击换头像</text>
+      <text class="onekey-hint">直接使用微信昵称和头像</text>
     </view>
 
-    <!-- 输入昵称 -->
-    <input class="nickname-input" type="nickname" placeholder="输入昵称" 
-           bindinput="onNicknameInput" />
+    <!-- 分隔线 -->
+    <view class="divider"><text class="divider-text">或手动设置</text></view>
+
+    <!-- 手动设置 -->
+    <view class="manual-section">
+      <view class="avatar-section">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image class="avatar-preview" src="{{tempAvatarPath || '/images/default-avatar.png'}}"></image>
+        </button>
+        <text class="avatar-hint">点击换头像</text>
+      </view>
+      <input class="nickname-input" type="nickname" placeholder="输入昵称" 
+             bindinput="onNicknameInput" />
+    </view>
 
     <view class="popup-actions">
       <button class="popup-cancel" bindtap="onClosePopup">跳过</button>

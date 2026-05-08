@@ -137,3 +137,13 @@
   text-align: center;
 }
 .popup-confirm::after { border: none; }
+
+.onekey-section { text-align: center; margin: 32rpx 0; }
+.onekey-btn { width: 100%; background: #07c160; color: #fff; border-radius: 12rpx; padding: 28rpx; font-size: 30rpx; }
+.onekey-btn::after { border: none; }
+.onekey-hint { font-size: 22rpx; color: #999; display: block; margin-top: 12rpx; }
+
+.divider { display: flex; align-items: center; margin: 24rpx 0; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 2rpx; background: #eee; }
+.divider-text { font-size: 22rpx; color: #ccc; padding: 0 24rpx; }
+.manual-section { margin: 16rpx 0; }
