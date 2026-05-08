@@ -4,12 +4,12 @@
   <block wx:if="{{!loading && stats}}">
     <!-- 用户卡片 -->
     <view class="user-card">
-      <view class="user-card-head" bindtap="onTapAvatar">
+      <button class="user-card-head" bindtap="onTapAvatar">
         <text class="user-icon">{{stats.avatarUrl ? '' : '🏀'}}</text>
         <image wx:if="{{stats.avatarUrl}}" class="user-avatar" src="{{stats.avatarUrl}}"></image>
         <text class="user-name">{{stats.nickName || '匿名球友'}}</text>
         <text wx:if="{{!isLoggedIn}}" class="auth-hint">点击授权微信信息</text>
-      </view>
+      </button>
 
       <view class="badge-row" wx:if="{{badge}}">
         <text class="user-badge">{{badge.label}}</text>

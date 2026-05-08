@@ -7,10 +7,10 @@
   </view>
 
   <!-- 登录提示条（点击直接授权） -->
-  <view class="login-banner" wx:if="{{!isLoggedIn}}" bindtap="onOneKeyAuth">
+  <button class="login-banner" wx:if="{{!isLoggedIn}}" bindtap="onOneKeyAuth">
     <text class="login-banner-text">👤 授权微信信息，在排行榜露脸</text>
-    <button class="login-banner-btn" loading="{{authLoading}}">立即授权</button>
-  </view>
+    <text class="login-banner-arrow">立即授权 ›</text>
+  </button>
 
   <!-- Tab切换 -->
   <view class="tab-bar">
