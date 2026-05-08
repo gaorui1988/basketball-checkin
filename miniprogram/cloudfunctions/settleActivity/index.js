@@ -29,13 +29,27 @@ exports.main = async (event, context) => {
       await db.collection('signups').doc(s._id).update({
         data: { status: 'no_show' }
       })
-      // 扣用户20分
-      await db.collection('users').doc(s.openid).update({
-        data: {
-          totalNoShows: _.inc(1),
-          points: _.inc(-20),
-        }
-      })
+      // 扣用户20分（安全获取用户，不存在则创建）
+      try {
+        await db.collection('users').doc(s.openid).update({
+          data: {
+            totalNoShows: _.inc(1),
+            points: _.inc(-20),
+          }
+        })
+      } catch (e) {
+        await db.collection('users').add({
+          data: {
+            _id: s.openid,
+            openid: s.openid,
+            points: -20,
+            totalNoShows: 1,
+            totalSignups: 0,
+            totalCheckins: 0,
+            totalCancels: 0,
+          }
+        })
+      }
       noShows++
     } else if (s.status === 'checked_in') {
       checkedIn++

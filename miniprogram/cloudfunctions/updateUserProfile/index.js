@@ -7,20 +7,19 @@ exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { nickName, avatarUrl } = event
 
-  // 检查用户是否存在
-  const userRes = await db.collection('users').doc(wxContext.OPENID).get()
-
-  if (userRes.data) {
+  try {
+    // 尝试更新
     await db.collection('users').doc(wxContext.OPENID).update({
       data: { nickName, avatarUrl }
     })
-  } else {
+  } catch (e) {
+    // 用户不存在，新建
     await db.collection('users').add({
       data: {
         _id: wxContext.OPENID,
         openid: wxContext.OPENID,
-        nickName,
-        avatarUrl,
+        nickName: nickName || '',
+        avatarUrl: avatarUrl || '',
         points: 0,
         totalSignups: 0,
         totalCheckins: 0,
